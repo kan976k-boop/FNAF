@@ -1,0 +1,1069 @@
+/* =============================================
+   CSS DEĞIŞKENLER & TEMEL AYARLAR
+   ============================================= */
+:root {
+  --bg-dark: #050505;
+  --bg-office: #0a0d0a;
+  --green-dim: #1a2e1a;
+  --green-glow: #2a5a2a;
+  --green-bright: #4aff4a;
+  --green-text: #33cc33;
+  --crt-green: #00ff41;
+  --amber: #ff8c00;
+  --red-alert: #ff2222;
+  --panel-bg: #111411;
+  --panel-border: #1f3a1f;
+  --shadow-deep: rgba(0, 0, 0, 0.95);
+  --noise-opacity: 0.08;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+@import url('https://fonts.googleapis.com/css2?family=VT323&family=Share+Tech+Mono&display=swap');
+
+body {
+  background: #000;
+  font-family: 'Share Tech Mono', monospace;
+  overflow: hidden;
+  width: 100vw;
+  height: 100vh;
+  cursor: crosshair;
+  user-select: none;
+}
+
+/* =============================================
+   STATIK GÜRÜLTÜ (CRT NOISE) OVERLAY
+   ============================================= */
+#noise-overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: var(--noise-opacity);
+  animation: noiseAnim 0.08s steps(1) infinite;
+}
+
+#scanlines {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  z-index: 9998;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,0.15) 2px,
+    rgba(0,0,0,0.15) 4px
+  );
+}
+
+#vignette {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  z-index: 9997;
+  background: radial-gradient(ellipse at center,
+    transparent 50%,
+    rgba(0,0,0,0.4) 85%,
+    rgba(0,0,0,0.75) 100%
+  );
+}
+
+/* Ekran titremesi */
+@keyframes noiseAnim {
+  0%   { transform: translate(0,0); }
+  10%  { transform: translate(-1px,1px); }
+  20%  { transform: translate(1px,-1px); }
+  30%  { transform: translate(-1px,-1px); }
+  40%  { transform: translate(1px,1px); }
+  50%  { transform: translate(0,0); }
+  60%  { transform: translate(1px,-1px); }
+  70%  { transform: translate(-1px,1px); }
+  80%  { transform: translate(1px,1px); }
+  90%  { transform: translate(-1px,-1px); }
+  100% { transform: translate(0,0); }
+}
+
+@keyframes screenFlicker {
+  0%, 95%, 100% { opacity: 1; }
+  96% { opacity: 0.7; }
+  97% { opacity: 1; }
+  98% { opacity: 0.6; }
+  99% { opacity: 0.9; }
+}
+
+/* =============================================
+   ANA OYUN ALANI
+   ============================================= */
+#game-container {
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+  background: #0a0a0a;
+  animation: screenFlicker 8s infinite;
+}
+
+/* =============================================
+   OFİS GÖRÜNÜMÜ
+   ============================================= */
+#office {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  background: linear-gradient(180deg, #0d1a0d 0%, #152015 40%, #0f180f 100%);
+  overflow: hidden;
+}
+
+/* Ofis tavan/zemin çizgileri */
+#office::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 35%;
+  background: linear-gradient(180deg,
+    #0a1a0a 0%,
+    #1a2e1a 60%,
+    transparent 100%
+  );
+  border-bottom: 1px solid #2a4a2a;
+}
+
+#office::after {
+  content: '';
+  position: absolute;
+  bottom: 80px; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #1a3a1a 20%, #1a3a1a 80%, transparent);
+}
+
+/* =============================================
+   OFİS MASASI
+   ============================================= */
+#desk {
+  position: absolute;
+  bottom: 0;
+  left: 0; right: 0;
+  height: 120px;
+  background: linear-gradient(180deg, #1a1a0a 0%, #0d0d05 100%);
+  border-top: 3px solid #2a2a10;
+  box-shadow: 0 -10px 40px rgba(0,0,0,0.8);
+}
+
+#desk::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #111, #2a2510 20%, #3a3515 50%, #2a2510 80%, #111);
+}
+
+/* =============================================
+   SOL KORIDOR (KAPI BÖLÜMÜ)
+   ============================================= */
+.corridor {
+  position: absolute;
+  top: 0;
+  width: 180px;
+  height: calc(100% - 120px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+#left-corridor { left: 0; }
+#right-corridor { right: 0; }
+
+/* Kapı çerçevesi */
+.door-frame {
+  position: absolute;
+  top: 15%;
+  width: 140px;
+  height: 65%;
+  border: 3px solid #2a4a2a;
+  background: linear-gradient(180deg, #0a1a0a 0%, #0d1a0d 100%);
+  box-shadow:
+    inset 0 0 30px rgba(0,0,0,0.7),
+    0 0 20px rgba(0,0,0,0.6);
+}
+
+#left-corridor .door-frame { left: 0; }
+#right-corridor .door-frame { right: 0; }
+
+/* Kapı paneli */
+.door-panel {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  background: linear-gradient(180deg, #0d1a0d 0%, #050d05 100%);
+  transform: translateY(-100%);
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  border-bottom: 4px solid #2a5a2a;
+  box-shadow: 0 5px 20px rgba(0, 255, 65, 0.1);
+  z-index: 2;
+}
+
+.door-panel.closed {
+  transform: translateY(0);
+  height: 100%;
+}
+
+/* Kapı rayları */
+.door-rails {
+  position: absolute;
+  top: 0; bottom: 0;
+  width: 12px;
+  background: repeating-linear-gradient(
+    180deg,
+    #1a2e1a 0px,
+    #0d1a0d 4px,
+    #0d1a0d 8px
+  );
+}
+
+.left-rail { left: 5px; }
+.right-rail { right: 5px; }
+
+/* Koridor ışık efekti */
+.corridor-light {
+  position: absolute;
+  top: 15%;
+  width: 130px;
+  height: 65%;
+  background: transparent;
+  transition: background 0.2s ease;
+  pointer-events: none;
+}
+
+#left-corridor .corridor-light { left: 5px; }
+#right-corridor .corridor-light { right: 5px; }
+
+.corridor-light.lit {
+  background: radial-gradient(ellipse at center,
+    rgba(255, 200, 100, 0.3) 0%,
+    rgba(255, 200, 100, 0.1) 50%,
+    transparent 100%
+  );
+}
+
+/* ANİMATRONİK SİLÜETİ */
+.animatronic {
+  position: absolute;
+  top: 10%;
+  width: 120px;
+  height: 80%;
+  opacity: 0;
+  transition: opacity 0.1s ease;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.animatronic.visible { opacity: 1; }
+
+#left-corridor .animatronic { left: 10px; }
+#right-corridor .animatronic { right: 10px; }
+
+/* =============================================
+   KONTROL BUTONLARI
+   ============================================= */
+.control-panel {
+  position: absolute;
+  bottom: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 20;
+}
+
+#left-controls { left: 10px; }
+#right-controls { right: 10px; }
+
+.ctrl-btn {
+  width: 75px;
+  height: 32px;
+  border: 2px solid #2a5a2a;
+  background: linear-gradient(180deg, #0d1a0d, #050d05);
+  color: var(--green-text);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 1px;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: all 0.15s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.ctrl-btn::before {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%;
+  width: 100%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(74,255,74,0.1), transparent);
+  transition: left 0.3s ease;
+}
+
+.ctrl-btn:hover::before { left: 100%; }
+
+.ctrl-btn:hover {
+  background: linear-gradient(180deg, #1a2e1a, #0d1a0d);
+  box-shadow: 0 0 10px rgba(74,255,74,0.3);
+  color: var(--green-bright);
+}
+
+.ctrl-btn.active {
+  background: linear-gradient(180deg, #1a3a1a, #0d200d);
+  box-shadow: 0 0 15px rgba(74,255,74,0.5), inset 0 0 5px rgba(74,255,74,0.2);
+  color: var(--green-bright);
+  border-color: var(--green-bright);
+}
+
+.ctrl-btn.light-active {
+  background: linear-gradient(180deg, #3a3a0a, #1a1a05);
+  box-shadow: 0 0 15px rgba(255,200,50,0.5);
+  color: #ffcc33;
+  border-color: #ffcc33;
+}
+
+/* =============================================
+   ÜST HUD - GÜÇ GÖSTERGESİ
+   ============================================= */
+#hud {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.hud-label {
+  font-family: 'VT323', monospace;
+  color: var(--green-text);
+  font-size: 14px;
+  letter-spacing: 2px;
+  text-shadow: 0 0 8px var(--green-text);
+  opacity: 0.8;
+}
+
+.hud-value {
+  font-family: 'VT323', monospace;
+  color: var(--crt-green);
+  font-size: 22px;
+  text-shadow: 0 0 12px var(--crt-green);
+}
+
+.hud-value.warning { color: var(--amber); text-shadow: 0 0 12px var(--amber); }
+.hud-value.critical { color: var(--red-alert); text-shadow: 0 0 12px var(--red-alert); animation: blink 0.5s infinite; }
+
+@keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+/* Güç çubuğu */
+#power-bar-container {
+  width: 140px;
+  height: 12px;
+  border: 1px solid #2a5a2a;
+  background: #020802;
+  position: relative;
+  margin-top: 3px;
+}
+
+#power-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #00ff41, #33ff33);
+  transition: width 0.5s ease, background 0.5s ease;
+  box-shadow: 0 0 8px rgba(0,255,65,0.5);
+}
+
+/* Usage göstergesi */
+#usage-display {
+  display: flex;
+  gap: 4px;
+  margin-top: 5px;
+}
+
+.usage-dot {
+  width: 10px; height: 10px;
+  border: 1px solid #2a5a2a;
+  background: #020802;
+  transition: background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.usage-dot.on {
+  background: var(--crt-green);
+  box-shadow: 0 0 6px var(--crt-green);
+}
+
+/* Saat */
+#clock-display {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  text-align: right;
+  z-index: 30;
+}
+
+#clock {
+  font-family: 'VT323', monospace;
+  font-size: 36px;
+  color: var(--crt-green);
+  text-shadow: 0 0 15px var(--crt-green);
+  letter-spacing: 3px;
+}
+
+#night-display {
+  font-family: 'VT323', monospace;
+  font-size: 14px;
+  color: var(--green-text);
+  letter-spacing: 2px;
+  opacity: 0.7;
+  text-align: right;
+}
+
+/* =============================================
+   MONİTÖR / KAMERA SİSTEMİ
+   ============================================= */
+#monitor-bar {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 300px;
+  height: 35px;
+  background: linear-gradient(180deg, #0d1a0d, #050d05);
+  border: 2px solid #2a5a2a;
+  border-bottom: none;
+  border-radius: 8px 8px 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 50;
+  transition: all 0.2s ease;
+  box-shadow: 0 -3px 15px rgba(74,255,74,0.2);
+}
+
+#monitor-bar:hover {
+  background: linear-gradient(180deg, #1a2e1a, #0d1a0d);
+  box-shadow: 0 -5px 20px rgba(74,255,74,0.35);
+}
+
+#monitor-bar-text {
+  font-family: 'VT323', monospace;
+  color: var(--green-text);
+  font-size: 16px;
+  letter-spacing: 3px;
+  text-shadow: 0 0 8px var(--green-text);
+}
+
+/* MONİTÖR EKRANI */
+#monitor-screen {
+  position: absolute;
+  bottom: -100%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 700px;
+  max-width: 98vw;
+  height: 480px;
+  background: #020504;
+  border: 3px solid #2a5a2a;
+  border-bottom: none;
+  border-radius: 10px 10px 0 0;
+  z-index: 40;
+  transition: bottom 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow:
+    0 -10px 40px rgba(0,255,65,0.15),
+    inset 0 0 60px rgba(0,0,0,0.8);
+  overflow: hidden;
+}
+
+#monitor-screen.open {
+  bottom: 0;
+}
+
+/* Monitor iç CRT efekti */
+#monitor-screen::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 3px,
+    rgba(0,0,0,0.1) 3px,
+    rgba(0,0,0,0.1) 4px
+  );
+  pointer-events: none;
+  z-index: 5;
+}
+
+/* Monitor başlık barı */
+#monitor-titlebar {
+  height: 30px;
+  background: linear-gradient(90deg, #0d1a0d, #050d05);
+  border-bottom: 1px solid #2a5a2a;
+  display: flex;
+  align-items: center;
+  padding: 0 15px;
+  gap: 10px;
+}
+
+.monitor-title-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--crt-green);
+  box-shadow: 0 0 6px var(--crt-green);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%,100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+#monitor-title-text {
+  font-family: 'VT323', monospace;
+  color: var(--green-text);
+  font-size: 13px;
+  letter-spacing: 2px;
+  flex: 1;
+}
+
+/* KAMERA GÖRÜNTÜSÜ */
+#camera-feed {
+  width: 100%;
+  height: 320px;
+  position: relative;
+  background: #010303;
+  overflow: hidden;
+}
+
+#camera-feed-inner {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#cam-label {
+  position: absolute;
+  top: 8px;
+  left: 10px;
+  font-family: 'VT323', monospace;
+  color: var(--crt-green);
+  font-size: 14px;
+  text-shadow: 0 0 8px var(--crt-green);
+  letter-spacing: 2px;
+  z-index: 5;
+}
+
+#cam-timestamp {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  font-family: 'Share Tech Mono', monospace;
+  color: var(--green-text);
+  font-size: 10px;
+  opacity: 0.7;
+  z-index: 5;
+}
+
+/* Kamera varlık görüntüsü */
+#cam-entity {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+/* KAMERA HARİTASI */
+#camera-map {
+  width: 100%;
+  height: 120px;
+  background: #010204;
+  border-top: 1px solid #1a3a1a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px;
+  flex-wrap: wrap;
+}
+
+.cam-btn {
+  width: 90px;
+  height: 45px;
+  border: 1px solid #1a3a1a;
+  background: #020804;
+  color: #1a5a1a;
+  font-family: 'VT323', monospace;
+  font-size: 12px;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  position: relative;
+  overflow: hidden;
+}
+
+.cam-btn:hover, .cam-btn.active {
+  border-color: var(--crt-green);
+  color: var(--crt-green);
+  background: #030f03;
+  box-shadow: 0 0 10px rgba(0,255,65,0.3);
+}
+
+.cam-btn .cam-name {
+  font-size: 10px;
+  opacity: 0.6;
+}
+
+/* =============================================
+   OYUN BİTİŞ EKRANI
+   ============================================= */
+#game-over {
+  display: none;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.0);
+  z-index: 99999;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  animation: gameOverAnim 0.5s forwards;
+}
+
+#game-over.show { display: flex; }
+
+@keyframes gameOverAnim {
+  0% { background: rgba(0,0,0,0); }
+  50% { background: rgba(180,0,0,0.8); }
+  100% { background: rgba(0,0,0,0.97); }
+}
+
+#game-over-text {
+  font-family: 'VT323', monospace;
+  color: #ff2222;
+  font-size: 72px;
+  text-shadow:
+    0 0 30px #ff0000,
+    0 0 60px #ff0000,
+    2px 2px 0 #800000;
+  letter-spacing: 5px;
+  animation: glitch 0.3s infinite;
+}
+
+@keyframes glitch {
+  0%, 90%, 100% { transform: translate(0,0) skew(0deg); filter: none; }
+  92% { transform: translate(-3px, 1px) skew(-2deg); filter: hue-rotate(90deg); }
+  94% { transform: translate(3px,-1px) skew(2deg); filter: hue-rotate(-90deg); }
+  96% { transform: translate(-2px,2px) skew(1deg); }
+  98% { transform: translate(2px,-2px) skew(-1deg); }
+}
+
+#restart-btn {
+  margin-top: 30px;
+  padding: 12px 40px;
+  border: 2px solid #ff2222;
+  background: transparent;
+  color: #ff2222;
+  font-family: 'VT323', monospace;
+  font-size: 24px;
+  letter-spacing: 3px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+#restart-btn:hover {
+  background: rgba(255,0,0,0.2);
+  box-shadow: 0 0 20px rgba(255,0,0,0.5);
+}
+
+/* WIN SCREEN */
+#win-screen {
+  display: none;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.95);
+  z-index: 99999;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+#win-screen.show { display: flex; }
+
+#win-text {
+  font-family: 'VT323', monospace;
+  color: var(--crt-green);
+  font-size: 52px;
+  text-shadow: 0 0 30px var(--crt-green);
+  letter-spacing: 4px;
+  text-align: center;
+}
+
+/* =============================================
+   BAŞLANGIÇ EKRANI
+   ============================================= */
+#start-screen {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: #000;
+  z-index: 99998;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 20px;
+}
+
+#start-screen.hidden { display: none; }
+
+#start-title {
+  font-family: 'VT323', monospace;
+  color: var(--crt-green);
+  font-size: 48px;
+  text-shadow: 0 0 25px var(--crt-green), 0 0 50px rgba(0,255,65,0.3);
+  letter-spacing: 5px;
+  text-align: center;
+  line-height: 1.2;
+  animation: titlePulse 2s infinite;
+}
+
+@keyframes titlePulse {
+  0%,100% { text-shadow: 0 0 25px var(--crt-green), 0 0 50px rgba(0,255,65,0.3); }
+  50% { text-shadow: 0 0 40px var(--crt-green), 0 0 80px rgba(0,255,65,0.5); }
+}
+
+#start-subtitle {
+  font-family: 'Share Tech Mono', monospace;
+  color: #1a5a1a;
+  font-size: 13px;
+  letter-spacing: 3px;
+  text-align: center;
+}
+
+#start-btn {
+  padding: 14px 50px;
+  border: 2px solid var(--crt-green);
+  background: transparent;
+  color: var(--crt-green);
+  font-family: 'VT323', monospace;
+  font-size: 26px;
+  letter-spacing: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  animation: borderPulse 2s infinite;
+}
+
+@keyframes borderPulse {
+  0%,100% { box-shadow: 0 0 10px rgba(0,255,65,0.3); }
+  50% { box-shadow: 0 0 25px rgba(0,255,65,0.6); }
+}
+
+#start-btn:hover {
+  background: rgba(0,255,65,0.1);
+  box-shadow: 0 0 30px rgba(0,255,65,0.5);
+}
+
+.start-info {
+  font-family: 'Share Tech Mono', monospace;
+  color: #1a3a1a;
+  font-size: 11px;
+  letter-spacing: 1px;
+  text-align: center;
+  line-height: 1.8;
+}
+
+/* =============================================
+   JUMPSCARE
+   ============================================= */
+#jumpscare {
+  display: none;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: 999999;
+  background: #000;
+  align-items: center;
+  justify-content: center;
+}
+
+#jumpscare.show { display: flex; }
+
+/* =============================================
+   GENEL EFEKTLER
+   ============================================= */
+.grain-overlay {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  z-index: 3;
+}
+
+/* Dikkat uyarısı */
+#alert-banner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: 'VT323', monospace;
+  color: var(--red-alert);
+  font-size: 20px;
+  letter-spacing: 3px;
+  text-shadow: 0 0 15px var(--red-alert);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  z-index: 50;
+  white-space: nowrap;
+}
+
+#alert-banner.show { opacity: 1; animation: blink 0.4s infinite; }
+
+/* Telefon mesajı */
+#phone-msg {
+  position: absolute;
+  bottom: 135px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(2,8,2,0.9);
+  border: 1px solid #1a3a1a;
+  padding: 10px 20px;
+  font-family: 'Share Tech Mono', monospace;
+  color: #1a5a1a;
+  font-size: 11px;
+  letter-spacing: 1px;
+  max-width: 400px;
+  text-align: center;
+  z-index: 25;
+  display: none;
+  line-height: 1.6;
+}
+
+#phone-msg.show { display: block; }
+
+/* =============================================
+   TAVAN LAMBASI (SALLANAN AMPUL)
+   ============================================= */
+#ceiling-light {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform-origin: top center;
+  animation: swingBulb 4s ease-in-out infinite;
+  z-index: 5;
+}
+
+@keyframes swingBulb {
+  0%,100% { transform: translateX(-50%) rotate(-4deg); }
+  50%      { transform: translateX(-50%) rotate(4deg); }
+}
+
+#ceiling-light-glow {
+  position: absolute;
+  top: 45px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 380px;
+  height: 280px;
+  background: radial-gradient(ellipse at top,
+    rgba(255,220,120,0.13) 0%,
+    rgba(255,200,80,0.05) 40%,
+    transparent 70%
+  );
+  pointer-events: none;
+  z-index: 4;
+  animation: glowPulse 4s ease-in-out infinite;
+}
+
+@keyframes glowPulse {
+  0%,100% { opacity: 0.7; }
+  50%      { opacity: 1.0; }
+}
+
+/* =============================================
+   GECE SEÇIM EKRANI
+   ============================================= */
+#night-select-screen {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: #000;
+  z-index: 99997;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 14px;
+}
+
+#night-select-screen.hidden { display: none; }
+
+.night-btn {
+  width: 270px;
+  height: 56px;
+  border: 2px solid #1a3a1a;
+  background: transparent;
+  color: #1a5a1a;
+  font-family: 'VT323', monospace;
+  font-size: 22px;
+  letter-spacing: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.night-btn:hover {
+  border-color: var(--crt-green);
+  color: var(--crt-green);
+  background: rgba(0,255,65,0.05);
+  box-shadow: 0 0 20px rgba(0,255,65,0.25);
+}
+
+.night-btn.locked {
+  opacity: 0.25;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.night-btn-sub {
+  display: block;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: #0a3a0a;
+  margin-top: 2px;
+}
+
+.night-btn:hover .night-btn-sub { color: #1a5a1a; }
+
+#highscore-display {
+  font-family: 'Share Tech Mono', monospace;
+  color: #1a3a1a;
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-align: center;
+  margin-top: 10px;
+}
+
+/* =============================================
+   İSTATİSTİK PANELI
+   ============================================= */
+#stats-panel {
+  background: rgba(2,8,2,0.85);
+  border: 1px solid #1a3a1a;
+  padding: 16px 28px;
+  margin-top: 18px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: #1a5a1a;
+  min-width: 300px;
+}
+
+.stat-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 5px 0;
+  border-bottom: 1px solid #0a1a0a;
+}
+
+.stat-val { color: var(--crt-green); }
+
+/* =============================================
+   ANİMATRONİK KONUM NOKTASI
+   ============================================= */
+.anim-dot {
+  display: inline-block;
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  position: absolute;
+  top: 4px; right: 4px;
+  animation: blinkDot 0.8s infinite;
+}
+
+@keyframes blinkDot {
+  0%,100% { opacity: 1; }
+  50%      { opacity: 0.1; }
+}
+
+.anim-dot-a { background: #ff3333; box-shadow: 0 0 4px #ff0000; }
+.anim-dot-b { background: #3333ff; box-shadow: 0 0 4px #0000ff; right: 13px; }
+.anim-dot-c { background: #ffaa00; box-shadow: 0 0 4px #ff8800; right: 22px; }
+
+.cam-btn { position: relative; }
+
+/* =============================================
+   KALP ATIŞI TEHLİKE
+   ============================================= */
+#heartbeat {
+  position: absolute;
+  bottom: 140px;
+  right: 10px;
+  font-family: 'VT323', monospace;
+  color: var(--red-alert);
+  font-size: 28px;
+  text-shadow: 0 0 12px var(--red-alert);
+  display: none;
+  z-index: 30;
+  animation: heartbeat 0.65s ease-in-out infinite;
+}
+
+@keyframes heartbeat {
+  0%,100% { transform: scale(1);   opacity: 1; }
+  20%      { transform: scale(1.35); opacity: 0.8; }
+  40%      { transform: scale(1);   opacity: 1; }
+  60%      { transform: scale(1.2); opacity: 0.9; }
+}
+
+#heartbeat.show { display: block; }
+
+/* =============================================
+   GÜÇ KESİNTİSİ OVERLAY
+   ============================================= */
+#power-outage-overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0);
+  pointer-events: none;
+  z-index: 9990;
+  transition: background 3s ease;
+}
+
+#power-outage-overlay.fading { background: rgba(0,0,0,0.97); }
+
+/* Ses durumu */
+#audio-status {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: 'Share Tech Mono', monospace;
+  color: #1a3a1a;
+  font-size: 9px;
+  letter-spacing: 1px;
+  z-index: 30;
+  opacity: 0.5;
+}
+
